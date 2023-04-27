@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.BDD</groupId>
+    <artifactId>ProgettoCalcoloScientifico</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>19</maven.compiler.source>
+        <maven.compiler.target>19</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <!-- dipendenza suggerita da ChatGPT-->
+        <!--<dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.6.1</version>
+        </dependency>-->
+
+        <!--<dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math-parent</artifactId>
+            <version>4.0-beta1</version>
+            <type>pom</type>
+        </dependency>-->
+
+        <!-- Efficient Java Matrix Library (EJML) dependecy. It's a linear algebra library for manipulating real/complex/dense/sparse matrices-->
+        <dependency>
+            <groupId>org.ejml</groupId>
+            <artifactId>ejml-all</artifactId>
+            <version>0.43</version>
+        </dependency>
+    <!-- The MAT File Library (MFL) is a Java library for reading and writing MAT Files that are compatible with MATLAB’s MAT-File Format.-->
+        <dependency>
+            <groupId>us.hebi.matlab.mat</groupId>
+            <artifactId>mfl-core</artifactId>
+            <version>0.5.14</version>
+        </dependency>
+
+        <dependency>
+            <groupId>us.hebi.matlab.mat</groupId>
+            <artifactId>mfl-ejml</artifactId>
+            <version>0.5.14</version>
+        </dependency>
+
+        <!--<dependency>
+            <groupId>com.diffplug.matsim</groupId>
+            <artifactId>matfilerw</artifactId>
+            <version>3.1.1</version>
+        </dependency>-->
+
+
+    </dependencies>
+
+
+</project>
