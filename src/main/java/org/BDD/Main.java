@@ -1,74 +1,23 @@
 package org.BDD;
 
 
+import org.ejml.data.DMatrixRBlock;
+import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
-import org.ejml.dense.row.decomposition.chol.CholeskyDecompositionCommon_DDRM;
-import org.ejml.dense.row.factory.DecompositionFactory_DDRM;
+import org.ejml.sparse.csc.CommonOps_DSCC;
+import org.ejml.sparse.csc.MatrixFeatures_DSCC;
 import org.ejml.sparse.csc.decomposition.chol.CholeskyUpLooking_DSCC;
 import us.hebi.matlab.mat.ejml.Mat5Ejml;
 import us.hebi.matlab.mat.format.Mat5;
-import us.hebi.matlab.mat.types.Array;
-import us.hebi.matlab.mat.types.Matrix;
 import us.hebi.matlab.mat.types.Sparse;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 
 public class Main {
     public static void main(String[] args) throws IOException {
-
-        /* Read matrix from file fatto da Davide
-        MatFileReader matReader = new MatFileReader("src/main/java/org/BDD/cfd1.mat");
-        MLStructure mlStructure = (MLStructure) matReader.getMLArray("Problem");
-        MLSparse mlSparse = (MLSparse) mlStructure.getField("A");
-        int numRows = mlSparse.getM();
-        int numCols = mlSparse.getN();
-        int[] ir = mlSparse.getIR();
-        int[] ic = mlSparse.getIC();
-        Double[] pr = mlSparse.exportReal();
-
-        for(int i = 0; i < ir.length; i++)
-            System.out.println("IR: " + ir[i]);
-
-        for(int i = 0; i < ic.length; i++)
-            System.out.println("IC: " + ic[i]);
-
-        /*for (Double aDouble : pr) {
-            System.out.println("PR: " + aDouble);
-        }*/
-
-        /*System.out.println("pr.Lenght " + pr.length);
-        System.out.println("ir.lenght " + ir.length);
-        System.out.println("ic.Lenght " + ic.length);
-
-        OpenMapRealMatrix sparseMatrix = new OpenMapRealMatrix(numRows, numCols);
-        for(int i = 0; i < pr.length; i++) {
-            sparseMatrix.setEntry(ir[i], ic[i], pr[i]);
-            System.out.println("numero posizione nel vettore pr[]: " + i);
-           }
-
-
-        System.out.println(" numero di righe Sparse matrix: " + sparseMatrix.getRowDimension());
-
-        System.out.println("Sparse matrix: " + sparseMatrix.getEntry(0, 0));
-
-        double[][] valoriMatrice = sparseMatrix.getData();
-
-        for(int i = 0; i < valoriMatrice.length; i++)
-            for(int j = 0; j < valoriMatrice[i].length; j++)
-                System.out.println("valoriMatrice: " + valoriMatrice[i][j]);*/
-
-
-
-
-
-
-
-
-
 
         // Read scalar from nested struct
         Sparse value = Mat5.readFromFile("src/main/java/org/BDD/ex15.mat")
@@ -94,6 +43,44 @@ public class Main {
 
         System.out.println("-----------------------------------");
 
+
+        //CONTROLLO CHE LA MATRICE SIA DEFINITA POSITIVA E SIMMETRICA
+        if(MatrixFeatures_DSCC.isPositiveDefinite(A)){
+            System.out.println("La matrice A è definita positiva");
+        }
+        else{
+            System.out.println("La matrice A non è definita positiva");
+            //se si arriva qui va lanciata un eccezione throw new RuntimeException("La matrice A non è definita positiva");
+        }
+
+        if(MatrixFeatures_DSCC.isSymmetric(A,1e-8)){
+            System.out.println("La matrice A è simmetrica");
+        }
+        else{
+            System.out.println("La matrice A non è simmetrica");
+            //se si arriva qui va lanciata un eccezione throw new RuntimeException("La matrice A non è simmetrica");
+        }
+
+        //CALCOLO SOLUZIONE CON DECOMPOSIZIONE DI CHOLESKY
+
+        //calcola la dimensione della matrice A
+        int n = A.numCols; //la matrice è simmetrica quindi n = m
+
+        //Crea il vettore B di modo che x = [1,1,....,1]
+        //tmp è un vettore colonna, va creato il vettore di tutti 1 e poi moltiplicato per la matrice A per creare B
+        DMatrixRMaj tmp  = new DMatrixRMaj(n,1);
+        for(int i = 0; i < n; i++){
+            tmp.set(i,0,1);
+        }
+
+        //moltiplicazione tra il vettore di tutti 1 tmp e la matrice A, il risultato viene salvato in B
+        DMatrixRMaj B = CommonOps_DSCC.mult(A,tmp,null);
+        //B.print();
+
+
+        //Crea il vettore x
+        DMatrixRMaj x = new DMatrixRMaj(n,1);   //x è un vettore colonna con tutti gli elementi uguali a 0
+
         //DecompositionFactory_DDRM.chol(A.numCols,false);
         CholeskyUpLooking_DSCC chol = new CholeskyUpLooking_DSCC();
         boolean result = chol.decompose(A);
@@ -111,7 +98,23 @@ public class Main {
         System.out.println("Valore dell'elemento 0,0 di R: " + R.get(0,0));
         System.out.println("Valore dell'elemento 1,6866 di R: " + R.get(1,6866));
         System.out.println("R ha tutti i valori diversi da zero?: " + R.isFull());
+
+
+        if(CommonOps_DSCC.solve(R, B, x)){
+            System.out.println("La soluzione è stata trovata");
+        }
+        else{
+            System.out.println("La soluzione non è stata trovata");
+        }
+
+        x.print();
+
+
+
        }
+
+
+
 
        public static void matrixTXT(DMatrixSparseCSC A, String matrixName) {
            /*try {
@@ -160,5 +163,5 @@ public class Main {
            }
        }
 
-       
+
 }
