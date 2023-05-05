@@ -4,7 +4,7 @@
 
 ## Introduzione
 
-Questo Repository contiene una delle 3 librerie analizzate per completare il progetto di calcolo scientifico. All'interno del progettp vengono utiliizzate le librerie:
+Questo Repository contiene una delle 3 librerie analizzate per completare il progetto di Metdi del Calcolo Scientifico. All'interno del progettp vengono utiliizzate le librerie:
 - [MAT File Library](https://github.com/HebiRobotics/MFL) (MFL) per leggere e scrivere file MAT compatibili con il formato MAT-File di MATLAB.
 - [Efficient Java Matrix Library](https://github.com/lessthanoptimal/ejml.git) (EJML) per risolvere il sistema associato ad una matrice sparsa, simmetrica e definita positiva utilizzando la decomposizione di cholesky
 
