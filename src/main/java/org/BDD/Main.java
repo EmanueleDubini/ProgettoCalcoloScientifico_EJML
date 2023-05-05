@@ -1,17 +1,24 @@
 package org.BDD;
 
 
-import org.ejml.data.DMatrixRBlock;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
+import org.ejml.dense.row.CommonOps_DDRM;
+import org.ejml.dense.row.NormOps_DDRM;
+import org.ejml.interfaces.linsol.LinearSolverSparse;
+import org.ejml.sparse.FillReducing;
 import org.ejml.sparse.csc.CommonOps_DSCC;
-import org.ejml.sparse.csc.MatrixFeatures_DSCC;
+import org.ejml.sparse.csc.CommonOps_MT_DSCC;
+import org.ejml.sparse.csc.NormOps_DSCC;
 import org.ejml.sparse.csc.decomposition.chol.CholeskyUpLooking_DSCC;
+import org.ejml.sparse.csc.factory.LinearSolverFactory_DSCC;
+import org.ejml.sparse.csc.linsol.chol.LinearSolverCholesky_DSCC;
 import us.hebi.matlab.mat.ejml.Mat5Ejml;
 import us.hebi.matlab.mat.format.Mat5;
 import us.hebi.matlab.mat.types.Sparse;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -19,8 +26,32 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) throws IOException {
 
+        // Percorso della cartella contenente le matrici
+        String path = "src/main/java/org/BDD/Matrici/";
+        // Lista di tutti i file nella cartella Matrici
+        File[] files = new File(path).listFiles();
+
+        // Ciclo su tutti i file nella cartella Matrici
+        /*for (File file : files) {
+            if (file.isFile()) {
+                System.out.println("Elaborazione della matrice " + file.getName());
+
+                // Importazione della matrice sparsa simmetrica e definita positiva A
+                Sparse value = Mat5.readFromFile(file.getAbsolutePath())
+                        .getStruct("Problem")
+                        .getSparse("A");
+
+                DMatrixSparseCSC A = new DMatrixSparseCSC(value.getNumRows(), value.getNumCols());
+                A = Mat5Ejml.convert(value, A);
+                A.nz_length = value.getNumNonZero();
+
+
+            }
+        }*/
+
+
         // Read scalar from nested struct
-        Sparse value = Mat5.readFromFile("src/main/java/org/BDD/ex15.mat")
+        Sparse value = Mat5.readFromFile("src/main/java/org/BDD/Matrici/ex15.mat")
                 .getStruct("Problem")
                 .getSparse("A");
 
@@ -28,7 +59,7 @@ public class Main {
         A = Mat5Ejml.convert(value, A);
         A.nz_length = value.getNumNonZero();
 
-        matrixTXT(A, "matrixA");
+        //matrixTXT(A, "matrixA");
 
 
 
@@ -44,8 +75,8 @@ public class Main {
         System.out.println("-----------------------------------");
 
 
-        //CONTROLLO CHE LA MATRICE SIA DEFINITA POSITIVA E SIMMETRICA
-        if(MatrixFeatures_DSCC.isPositiveDefinite(A)){
+        //CONTROLLO CHE LA MATRICE SIA DEFINITA POSITIVA E SIMMETRICA todo rimettere per consegna
+        /*if(MatrixFeatures_DSCC.isPositiveDefinite(A)){
             System.out.println("La matrice A è definita positiva");
         }
         else{
@@ -59,59 +90,83 @@ public class Main {
         else{
             System.out.println("La matrice A non è simmetrica");
             //se si arriva qui va lanciata un eccezione throw new RuntimeException("La matrice A non è simmetrica");
-        }
+        }*/
 
         //CALCOLO SOLUZIONE CON DECOMPOSIZIONE DI CHOLESKY
+
+        // Libera la memoria non utilizzata
+        System.gc();
+        // Misura la memoria iniziale
+        long memoriaIniziale = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
         //calcola la dimensione della matrice A
         int n = A.numCols; //la matrice è simmetrica quindi n = m
 
         //Crea il vettore B di modo che x = [1,1,....,1]
         //tmp è un vettore colonna, va creato il vettore di tutti 1 e poi moltiplicato per la matrice A per creare B
-        DMatrixRMaj tmp  = new DMatrixRMaj(n,1);
+        DMatrixSparseCSC tmp  = new DMatrixSparseCSC (n,1);
         for(int i = 0; i < n; i++){
             tmp.set(i,0,1);
         }
 
         //moltiplicazione tra il vettore di tutti 1 tmp e la matrice A, il risultato viene salvato in B
-        DMatrixRMaj B = CommonOps_DSCC.mult(A,tmp,null);
+        DMatrixSparseCSC B = CommonOps_MT_DSCC.mult(A,tmp,null); //B = A*tmp eseguito in mmulti-thread
         //B.print();
 
 
         //Crea il vettore x
-        DMatrixRMaj x = new DMatrixRMaj(n,1);   //x è un vettore colonna con tutti gli elementi uguali a 0
-
-        //DecompositionFactory_DDRM.chol(A.numCols,false);
-        CholeskyUpLooking_DSCC chol = new CholeskyUpLooking_DSCC();
-        boolean result = chol.decompose(A);
-
-        if(!result)
-            throw new RuntimeException("Cholesky failed");
-
-        DMatrixSparseCSC R = chol.getT(A);
-
-        matrixTXT(R, "matrixR");
-
-        //R.printNonZero();  // R is upper triangular
-        System.out.println("Dimensioni matrice R: " + R.numRows + " " + R.numCols);
-        System.out.println("Numero di elementi non nulli di R: " + R.nz_length);
-        System.out.println("Valore dell'elemento 0,0 di R: " + R.get(0,0));
-        System.out.println("Valore dell'elemento 1,6866 di R: " + R.get(1,6866));
-        System.out.println("R ha tutti i valori diversi da zero?: " + R.isFull());
+        DMatrixSparseCSC x = new DMatrixSparseCSC(n,1);   //x è un vettore colonna con tutti gli elementi uguali a 0
 
 
-        if(CommonOps_DSCC.solve(R, B, x)){
-            System.out.println("La soluzione è stata trovata");
+        long startTime = System.currentTimeMillis(); //registra il tempo d'inizio
+
+        LinearSolverSparse<DMatrixSparseCSC, DMatrixRMaj> solver = LinearSolverFactory_DSCC.cholesky(FillReducing.NONE);
+        solver.setA(A);
+        solver.solveSparse(B,x);
+        // Stampa della soluzione
+        System.out.println("Soluzione del sistema:");
+        //x.print();
+        System.out.println("R ha tutti i valori diversi da zero?: " + x.isFull());
+
+        //risoluzione alternatiiva del sistema lineare
+        /*LinearSolverCholesky_DSCC solver2 = new LinearSolverCholesky_DSCC(new CholeskyUpLooking_DSCC(), null);
+        solver2.setA(A);
+        solver2.solve(B,x);
+        // Stampa della soluzione
+        //System.out.println("Soluzione del sistema:");
+        //x.print();*/
+
+        // Misura la memoria finale
+        long memoriaFinale = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+
+        // Calcola la memoria utilizzata
+        long memoriaUtilizzata = memoriaFinale - memoriaIniziale;
+        System.out.println("Memoria iniziale: " + (memoriaIniziale / (1024F * 1024F)) + " MB");
+        System.out.println("Memoria finale: " + (memoriaFinale / (1024F * 1024F)) + " MB");
+        System.out.println("Memoria utilizzata: " + (memoriaUtilizzata / (1024F * 1024F)) + " MB");
+
+        //registra il tempo di fine
+        long stopTime = System.currentTimeMillis();
+        //calcola il tempo impiegato in millisecondi
+        double elapsedTimeSeconds = (stopTime - startTime) / 1000.0;
+        System.out.println("Tempo di esecuzione: " + elapsedTimeSeconds + " s");
+
+        //definisco vettore soluzione xe esatta di modo che xe = [1,1,....,1]
+        DMatrixSparseCSC xe  = new DMatrixSparseCSC (n,1);
+        for(int i = 0; i < n; i++){
+            xe.set(i,0,1);
         }
-        else{
-            System.out.println("La soluzione non è stata trovata");
-        }
 
-        x.print();
-
-
+        double norm_x = NormOps_DSCC.normF(x);
+        double norm_xe = NormOps_DSCC.normF(xe);
+        double norm_diff = norm_x - norm_xe;
+        double relative_error = norm_diff / norm_xe;
+        System.out.println("Norma di x: " + norm_x);
+        System.out.println("Norma di xe: " + norm_xe);
+        System.out.println("Errore relativo: " + relative_error);
 
        }
+
 
 
 
