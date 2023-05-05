@@ -25,12 +25,12 @@ Le Matrici simmetriche e definite positive considerate fanno parte della SuiteSp
 
 | Nomi Matrici | Stato | Dimensione (in KB) |
 |-----------|-----------|-----------|
-| [ex15.mat](https://sparse.tamu.edu/FIDAP/ex15)  | Risolta :white_check_mark:   |  555 |
-| [shallow_water1.mat](https://sparse.tamu.edu/MaxPlanck/shallow_water1)    | Risolta :white_check_mark:   | 2263 |
-| [apache2.mat](https://sparse.tamu.edu/GHS_psdef/apache2)   | Risolta :white_check_mark:    | 8302 |
-| [parabolic_fem.mat](https://sparse.tamu.edu/Wissgott/parabolic_fem)  | Risolta :white_check_mark:    | 13116 |
-| [G3_circuit.mat](https://sparse.tamu.edu/AMD/G3_circuit)   | Risolta :white_check_mark:    | 13833 |
-| [cfd1.mat](https://sparse.tamu.edu/Rothberg/cfd1)   | Risolta :white_check_mark:    | 14164 |
-| [cfd2.mat](https://sparse.tamu.edu/Rothberg/cfd2)   | Risolta :white_check_mark:    | 23192 |
+| [ex15.mat](https://sparse.tamu.edu/FIDAP/ex15)  | :white_check_mark:   |  555 |
+| [shallow_water1.mat](https://sparse.tamu.edu/MaxPlanck/shallow_water1)    | :white_check_mark:   | 2263 |
+| [apache2.mat](https://sparse.tamu.edu/GHS_psdef/apache2)   |:white_check_mark:    | 8302 |
+| [parabolic_fem.mat](https://sparse.tamu.edu/Wissgott/parabolic_fem)  | :white_check_mark:    | 13116 |
+| [G3_circuit.mat](https://sparse.tamu.edu/AMD/G3_circuit)   | :white_check_mark:    | 13833 |
+| [cfd1.mat](https://sparse.tamu.edu/Rothberg/cfd1)   | :white_check_mark:    | 14164 |
+| [cfd2.mat](https://sparse.tamu.edu/Rothberg/cfd2)   | :white_check_mark:    | 23192 |
 | [StocF-1465.mat](https://sparse.tamu.edu/Janna/StocF-1465)   | Out of memory :x:    | 178368 |
 | [Flan_1565.mat](https://sparse.tamu.edu/Janna/Flan_1565)   | Out of Memory :x:    | 292858 |
