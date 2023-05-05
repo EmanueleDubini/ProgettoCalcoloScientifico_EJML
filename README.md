@@ -5,7 +5,7 @@ sfruttando la decomposizione di Cholesky
 
 Questo Repository contiene una delle 3 librerie analizzate per completare il progetto di calcolo scientifico. Utilizza la libreria EJML per risolvere il sistema associato ad una matrice sparsa, simmetrica e definita positiva utilizzando la decomposizione di cholesky
 
-Il file *main.java* contiene il codice per eseguire la decomposizione di Cholesky e la risoluzione 
+Il file *Main.java* contiene il codice per eseguire la decomposizione di Cholesky e la risoluzione 
 del sistema lineare *Ax=b* per gran parte delle matrici richieste dalla consegna.
 
 ### Matrici supportate
