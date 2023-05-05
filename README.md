@@ -1,6 +1,6 @@
 # Progetto Metodi del Calcolo Scientifico - Libreria EJML
 
->  todo vedere cosa inserire
+>  Progetto JAVA per la risoluzione con il metodo di Choleski di sistemi lineari con matrici sparse e definite positive di grandi dimensioni
 
 ## Introduzione
 
