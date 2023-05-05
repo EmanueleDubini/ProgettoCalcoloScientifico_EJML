@@ -1,6 +1,6 @@
 # Progetto Metodi del Calcolo Scientifico - Libreria EJML
 
-> Libreria Java EJML (aggiungere Link) per la risoluzione di sistemi lineari 
+> Libreria Java Java Matrix Library (!(EJML)[https://github.com/lessthanoptimal/ejml.git]) per la risoluzione di sistemi lineari 
 sfruttando la decomposizione di Cholesky
 
 Questo Repository contiene una delle 3 librerie analizzate per completare il progetto di calcolo scientifico. Utilizza la libreria EJML per risolvere il sistema associato ad una matrice sparsa, simmetrica e definita positiva utilizzando la decomposizione di cholesky
