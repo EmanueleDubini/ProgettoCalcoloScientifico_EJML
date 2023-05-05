@@ -4,15 +4,18 @@
 
 ## Introduzione
 
-Questo Repository contiene una delle 3 librerie analizzate per completare il progetto di Metdi del Calcolo Scientifico. All'interno del progettp vengono utiliizzate le librerie:
+Questo Repository contiene una delle 3 librerie analizzate per completare il progetto di Metdi del Calcolo Scientifico. All'interno del progetto vengono utiliizzate le seguenti librerie:
 - [MAT File Library](https://github.com/HebiRobotics/MFL) (MFL) per leggere e scrivere file MAT compatibili con il formato MAT-File di MATLAB.
 - [Efficient Java Matrix Library](https://github.com/lessthanoptimal/ejml.git) (EJML) per risolvere il sistema associato ad una matrice sparsa, simmetrica e definita positiva utilizzando la decomposizione di cholesky
 
-## Documentazione
-Link utili per visionare la documentazione delle librerie utilizzate:
+## Documentazione utilizzata
+Link utili per visionare la documentazione delle librerie utilizzate durante l'implementazione del progetto:
+- repository libreria MFL: https://github.com/HebiRobotics/MFL
+- JavaDoc libreria MFL: https://javadoc.io/doc/us.hebi.matlab.mat/mfl-core/latest/index.html
 - Documentazione libreria EJML: http://ejml.org/wiki/index.php?title=Manual
 - JavaDoc libreria EJML: http://ejml.org/javadoc/
 
+## Note Generali
 Il file *Main.java* contiene il codice per eseguire la decomposizione di Cholesky e la risoluzione 
 del sistema lineare *Ax=b* per gran parte delle matrici richieste dalla consegna.
 
