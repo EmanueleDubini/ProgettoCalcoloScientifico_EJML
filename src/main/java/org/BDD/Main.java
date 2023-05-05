@@ -3,16 +3,11 @@ package org.BDD;
 
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
-import org.ejml.dense.row.CommonOps_DDRM;
-import org.ejml.dense.row.NormOps_DDRM;
 import org.ejml.interfaces.linsol.LinearSolverSparse;
 import org.ejml.sparse.FillReducing;
-import org.ejml.sparse.csc.CommonOps_DSCC;
 import org.ejml.sparse.csc.CommonOps_MT_DSCC;
 import org.ejml.sparse.csc.NormOps_DSCC;
-import org.ejml.sparse.csc.decomposition.chol.CholeskyUpLooking_DSCC;
 import org.ejml.sparse.csc.factory.LinearSolverFactory_DSCC;
-import org.ejml.sparse.csc.linsol.chol.LinearSolverCholesky_DSCC;
 import us.hebi.matlab.mat.ejml.Mat5Ejml;
 import us.hebi.matlab.mat.format.Mat5;
 import us.hebi.matlab.mat.types.Sparse;
@@ -31,7 +26,7 @@ public class Main {
         // Lista di tutti i file nella cartella Matrici
         File[] files = new File(path).listFiles();
 
-        // Ciclo su tutti i file nella cartella Matrici
+        //----------CICLO CHE LEGGE TUTTE LE MATRICI DELLA CARTELLA "Matrici"----------
         /*for (File file : files) {
             if (file.isFile()) {
                 System.out.println("Elaborazione della matrice " + file.getName());
@@ -60,9 +55,6 @@ public class Main {
         A.nz_length = value.getNumNonZero();
 
         //matrixTXT(A, "matrixA");
-
-
-
         //System.out.println("Value: " + value);
         //A.printNonZero();
 
@@ -75,7 +67,7 @@ public class Main {
         System.out.println("-----------------------------------");
 
 
-        //CONTROLLO CHE LA MATRICE SIA DEFINITA POSITIVA E SIMMETRICA todo rimettere per consegna
+        //----------CONTROLLO CHE LA MATRICE SIA DEFINITA POSITIVA E SIMMETRICA---------- todo rimettere per consegna
         /*if(MatrixFeatures_DSCC.isPositiveDefinite(A)){
             System.out.println("La matrice A è definita positiva");
         }
@@ -92,8 +84,7 @@ public class Main {
             //se si arriva qui va lanciata un eccezione throw new RuntimeException("La matrice A non è simmetrica");
         }*/
 
-        //CALCOLO SOLUZIONE CON DECOMPOSIZIONE DI CHOLESKY
-
+        //----------CALCOLO SOLUZIONE CON DECOMPOSIZIONE DI CHOLESKY----------
         // Libera la memoria non utilizzata
         System.gc();
         // Misura la memoria iniziale
@@ -151,6 +142,7 @@ public class Main {
         double elapsedTimeSeconds = (stopTime - startTime) / 1000.0;
         System.out.println("Tempo di esecuzione: " + elapsedTimeSeconds + " s");
 
+        //----------CALCOLO ERRORE RELATIVO----------
         //definisco vettore soluzione xe esatta di modo che xe = [1,1,....,1]
         DMatrixSparseCSC xe  = new DMatrixSparseCSC (n,1);
         for(int i = 0; i < n; i++){
