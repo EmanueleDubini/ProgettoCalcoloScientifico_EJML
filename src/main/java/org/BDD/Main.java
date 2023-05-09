@@ -1,11 +1,11 @@
 package org.BDD;
 
-
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.interfaces.linsol.LinearSolverSparse;
 import org.ejml.sparse.FillReducing;
 import org.ejml.sparse.csc.CommonOps_MT_DSCC;
+import org.ejml.sparse.csc.MatrixFeatures_DSCC;
 import org.ejml.sparse.csc.NormOps_DSCC;
 import org.ejml.sparse.csc.factory.LinearSolverFactory_DSCC;
 import us.hebi.matlab.mat.ejml.Mat5Ejml;
@@ -27,9 +27,9 @@ public class Main {
         File[] files = new File(path).listFiles();
 
         //----------CICLO CHE LEGGE TUTTE LE MATRICI DELLA CARTELLA "Matrici"----------
-        /*for (File file : files) {
+        for (File file : files) {
             if (file.isFile()) {
-                System.out.println("Elaborazione della matrice " + file.getName());
+                System.out.println("-----------------------------------" + "Elaborazione della matrice " + file.getName() + "-----------------------------------");
 
                 // Importazione della matrice sparsa simmetrica e definita positiva A
                 Sparse value = Mat5.readFromFile(file.getAbsolutePath())
@@ -40,128 +40,111 @@ public class Main {
                 A = Mat5Ejml.convert(value, A);
                 A.nz_length = value.getNumNonZero();
 
+                System.out.println("Dimensioni matrice: " + A.numRows + " " + A.numCols);
+                System.out.println("Numero di elementi: " + A.getNumElements());
+                System.out.println("Numero di elementi non nulli: " + A.nz_length);
 
+                System.out.println("\n---> Inizio elaborazione matrice " + file.getName() + " \n");
+
+                //----------CONTROLLO CHE LA MATRICE SIA DEFINITA POSITIVA E SIMMETRICA---------- todo rimettere per consegna
+                /*if(MatrixFeatures_DSCC.isPositiveDefinite(A)){
+                    System.out.println("La matrice A è definita positiva");
+                }
+                else{
+                    System.out.println("La matrice A non è definita positiva");
+                    //se si arriva qui va lanciata un eccezione throw new RuntimeException("La matrice A non è definita positiva");
+                }
+
+                if(MatrixFeatures_DSCC.isSymmetric(A,1e-8)){
+                    System.out.println("La matrice A è simmetrica");
+                }
+                else{
+                   System.out.println("La matrice A non è simmetrica");
+                   //se si arriva qui va lanciata un eccezione throw new RuntimeException("La matrice A non è simmetrica");
+                }*/
+
+                //----------CALCOLO SOLUZIONE CON DECOMPOSIZIONE DI CHOLESKY----------
+                // Libera la memoria non utilizzata
+                System.gc();
+                // Misura la memoria iniziale
+                long memoriaIniziale = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+
+                //calcola la dimensione della matrice A
+                int n = A.numCols; //la matrice è simmetrica quindi n = m
+
+                //Crea il vettore B di modo che x = [1,1,....,1]
+                //tmp è un vettore colonna, va creato il vettore di tutti 1 e poi moltiplicato per la matrice A per creare B
+                DMatrixSparseCSC tmp  = new DMatrixSparseCSC (n,1);
+                for(int i = 0; i < n; i++){
+                    tmp.set(i,0,1);
+                }
+
+                //moltiplicazione tra il vettore di tutti 1 tmp e la matrice A, il risultato viene salvato in B
+                DMatrixSparseCSC B = CommonOps_MT_DSCC.mult(A,tmp,null); //B = A*tmp eseguito in mmulti-thread
+
+                //Crea il vettore x
+                DMatrixSparseCSC x = new DMatrixSparseCSC(n,1);   //x è un vettore colonna con tutti gli elementi uguali a 0
+
+
+                long startTime = System.currentTimeMillis(); //registra il tempo d'inizio
+
+                LinearSolverSparse<DMatrixSparseCSC, DMatrixRMaj> solver = LinearSolverFactory_DSCC.cholesky(FillReducing.NONE);
+                solver.setA(A);
+                solver.solveSparse(B,x);
+
+                System.out.println("Sistema risolto");
+
+                //risoluzione alternatiiva del sistema lineare
+                /*LinearSolverCholesky_DSCC solver2 = new LinearSolverCholesky_DSCC(new CholeskyUpLooking_DSCC(), null);
+                solver2.setA(A);
+                solver2.solve(B,x);
+                // Stampa della soluzione
+                //System.out.println("Soluzione del sistema:");
+                //x.print();*/
+
+                // Misura la memoria finale
+                long memoriaFinale = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+
+                // Calcola la memoria utilizzata
+                long memoriaUtilizzata = memoriaFinale - memoriaIniziale;
+                System.out.println("Memoria iniziale: " + (memoriaIniziale / (1024F * 1024F)) + " MB");
+                System.out.println("Memoria finale: " + (memoriaFinale / (1024F * 1024F)) + " MB");
+                System.out.println("Memoria utilizzata nella risoluzione: " + (memoriaUtilizzata / (1024F * 1024F)) + " MB");
+
+                //registra il tempo di fine
+                long stopTime = System.currentTimeMillis();
+                //calcola il tempo impiegato in millisecondi
+                double elapsedTimeSeconds = (stopTime - startTime) / 1000.0;
+                System.out.println("Tempo di esecuzione: " + elapsedTimeSeconds + " s");
+
+                //----------CALCOLO ERRORE RELATIVO----------
+                //definisco vettore soluzione xe esatta di modo che xe = [1,1,....,1]
+                DMatrixSparseCSC xe  = new DMatrixSparseCSC (n,1);
+                for(int i = 0; i < n; i++){
+                    xe.set(i,0,1);
+                }
+
+                double norm_x = NormOps_DSCC.normF(x);
+                double norm_xe = NormOps_DSCC.normF(xe);
+                double norm_diff = norm_x - norm_xe;
+                double relative_error = norm_diff / norm_xe;
+                //System.out.println("Norma di x: " + norm_x);
+                //System.out.println("Norma di xe: " + norm_xe);
+                System.out.println("Errore relativo: " + relative_error);
+                System.out.println("\n");
             }
-        }*/
+        }
 
 
-        // Read scalar from nested struct
-        Sparse value = Mat5.readFromFile("src/main/java/org/BDD/Matrici/ex15.mat")
+        // importazione della matrice sparsa simmetrica e definita positiva A
+        /*Sparse value = Mat5.readFromFile("src/main/java/org/BDD/Matrici/ex15.mat")
                 .getStruct("Problem")
                 .getSparse("A");
 
         DMatrixSparseCSC A = new DMatrixSparseCSC(value.getNumRows(), value.getNumCols());
         A = Mat5Ejml.convert(value, A);
-        A.nz_length = value.getNumNonZero();
-
-        //matrixTXT(A, "matrixA");
-        //System.out.println("Value: " + value);
-        //A.printNonZero();
-
-        System.out.println("Dimensioni matrice A: " + A.numRows + " " + A.numCols);
-        System.out.println("Numero di elementi non nulli di A: " + A.nz_length);
-        System.out.println("Valore dell'elemento 0,0 di A: " + A.get(0,0));
-        System.out.println("Valore dell'elemento 1,6866 di A: " + A.get(1,6866));
-        System.out.println("A ha tutti i valori diversi da zero?: " + A.isFull());
-
-        System.out.println("-----------------------------------");
-
-
-        //----------CONTROLLO CHE LA MATRICE SIA DEFINITA POSITIVA E SIMMETRICA---------- todo rimettere per consegna
-        /*if(MatrixFeatures_DSCC.isPositiveDefinite(A)){
-            System.out.println("La matrice A è definita positiva");
-        }
-        else{
-            System.out.println("La matrice A non è definita positiva");
-            //se si arriva qui va lanciata un eccezione throw new RuntimeException("La matrice A non è definita positiva");
-        }
-
-        if(MatrixFeatures_DSCC.isSymmetric(A,1e-8)){
-            System.out.println("La matrice A è simmetrica");
-        }
-        else{
-            System.out.println("La matrice A non è simmetrica");
-            //se si arriva qui va lanciata un eccezione throw new RuntimeException("La matrice A non è simmetrica");
-        }*/
-
-        //----------CALCOLO SOLUZIONE CON DECOMPOSIZIONE DI CHOLESKY----------
-        // Libera la memoria non utilizzata
-        System.gc();
-        // Misura la memoria iniziale
-        long memoriaIniziale = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-
-        //calcola la dimensione della matrice A
-        int n = A.numCols; //la matrice è simmetrica quindi n = m
-
-        //Crea il vettore B di modo che x = [1,1,....,1]
-        //tmp è un vettore colonna, va creato il vettore di tutti 1 e poi moltiplicato per la matrice A per creare B
-        DMatrixSparseCSC tmp  = new DMatrixSparseCSC (n,1);
-        for(int i = 0; i < n; i++){
-            tmp.set(i,0,1);
-        }
-
-        //moltiplicazione tra il vettore di tutti 1 tmp e la matrice A, il risultato viene salvato in B
-        DMatrixSparseCSC B = CommonOps_MT_DSCC.mult(A,tmp,null); //B = A*tmp eseguito in mmulti-thread
-        //B.print();
-
-
-        //Crea il vettore x
-        DMatrixSparseCSC x = new DMatrixSparseCSC(n,1);   //x è un vettore colonna con tutti gli elementi uguali a 0
-
-
-        long startTime = System.currentTimeMillis(); //registra il tempo d'inizio
-
-        LinearSolverSparse<DMatrixSparseCSC, DMatrixRMaj> solver = LinearSolverFactory_DSCC.cholesky(FillReducing.NONE);
-        solver.setA(A);
-        solver.solveSparse(B,x);
-        // Stampa della soluzione
-        System.out.println("Soluzione del sistema:");
-        //x.print();
-        System.out.println("R ha tutti i valori diversi da zero?: " + x.isFull());
-
-        //risoluzione alternatiiva del sistema lineare
-        /*LinearSolverCholesky_DSCC solver2 = new LinearSolverCholesky_DSCC(new CholeskyUpLooking_DSCC(), null);
-        solver2.setA(A);
-        solver2.solve(B,x);
-        // Stampa della soluzione
-        //System.out.println("Soluzione del sistema:");
-        //x.print();*/
-
-        // Misura la memoria finale
-        long memoriaFinale = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-
-        // Calcola la memoria utilizzata
-        long memoriaUtilizzata = memoriaFinale - memoriaIniziale;
-        System.out.println("Memoria iniziale: " + (memoriaIniziale / (1024F * 1024F)) + " MB");
-        System.out.println("Memoria finale: " + (memoriaFinale / (1024F * 1024F)) + " MB");
-        System.out.println("Memoria utilizzata: " + (memoriaUtilizzata / (1024F * 1024F)) + " MB");
-
-        //registra il tempo di fine
-        long stopTime = System.currentTimeMillis();
-        //calcola il tempo impiegato in millisecondi
-        double elapsedTimeSeconds = (stopTime - startTime) / 1000.0;
-        System.out.println("Tempo di esecuzione: " + elapsedTimeSeconds + " s");
-
-        //----------CALCOLO ERRORE RELATIVO----------
-        //definisco vettore soluzione xe esatta di modo che xe = [1,1,....,1]
-        DMatrixSparseCSC xe  = new DMatrixSparseCSC (n,1);
-        for(int i = 0; i < n; i++){
-            xe.set(i,0,1);
-        }
-
-        double norm_x = NormOps_DSCC.normF(x);
-        double norm_xe = NormOps_DSCC.normF(xe);
-        double norm_diff = norm_x - norm_xe;
-        double relative_error = norm_diff / norm_xe;
-        System.out.println("Norma di x: " + norm_x);
-        System.out.println("Norma di xe: " + norm_xe);
-        System.out.println("Errore relativo: " + relative_error);
-
+        A.nz_length = value.getNumNonZero();*/
        }
-
-
-
-
 
        public static void matrixTXT(DMatrixSparseCSC A, String matrixName) {
            /*try {
