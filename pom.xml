@@ -48,12 +48,12 @@
             <version>0.5.14</version>
         </dependency>
 
-        <!--<dependency>
-            <groupId>com.diffplug.matsim</groupId>
-            <artifactId>matfilerw</artifactId>
-            <version>3.1.1</version>
-        </dependency>-->
-
+        <!--dipendenza Maven per usare la classe CsvWriter del pacchetto OpenCSV -->
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>5.5.2</version>
+        </dependency>
 
     </dependencies>
 
