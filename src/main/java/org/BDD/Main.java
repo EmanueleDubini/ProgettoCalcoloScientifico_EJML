@@ -6,6 +6,7 @@ import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.interfaces.linsol.LinearSolverSparse;
 import org.ejml.sparse.FillReducing;
+import org.ejml.sparse.csc.CommonOps_DSCC;
 import org.ejml.sparse.csc.CommonOps_MT_DSCC;
 import org.ejml.sparse.csc.NormOps_DSCC;
 import org.ejml.sparse.csc.factory.LinearSolverFactory_DSCC;
@@ -31,7 +32,7 @@ public class Main {
         ArrayList<Long> MemoryPost = new ArrayList<>();
         ArrayList<Long> MemoryDiff = new ArrayList<>();
         ArrayList<Double> Time = new ArrayList<>();
-        ArrayList<Double> Error = new ArrayList<>(); //todo mettere in notazione scientifica
+        ArrayList<Double> Error = new ArrayList<>();
 
         // Percorso della cartella contenente le matrici
         String path = "src/main/java/org/BDD/Matrici/";
@@ -148,12 +149,15 @@ public class Main {
                     xe.set(z,0,1);
                 }
 
-                double norm_x = NormOps_DSCC.normF(x);
+                //calcolo norma || x -xe||
+                DMatrixSparseCSC x_diff_xe = new DMatrixSparseCSC(n,1);
+                x_diff_xe = CommonOps_DSCC.add(1, x, -1, xe, x_diff_xe, null, null);
+                double norm_diff = NormOps_DSCC.normF(x_diff_xe);
+                //calcolo norma || xe||
                 double norm_xe = NormOps_DSCC.normF(xe);
-                double norm_diff = norm_x - norm_xe;
-                double relative_error = norm_diff / norm_xe;
-                //System.out.println("Norma di x: " + norm_x);
-                //System.out.println("Norma di xe: " + norm_xe);
+                //calcolo errore relativo
+                double relative_error = norm_diff/norm_xe;
+
                 Error.add(relative_error);
                 System.out.println("Errore relativo: " + relative_error);
                 System.out.println("\n");
@@ -163,7 +167,7 @@ public class Main {
         System.out.println("\n----------------------------------------------------------------------");
 
         //----------SCRITTURA FILE CSV----------
-        write("src/main/java/org/BDD/Dati_Java.csv", MatrixName, Size, MemoryPre, MemoryPost, MemoryDiff, Time, Error);
+        write("src/main/java/org/BDD/dati_java.csv", MatrixName, Size, MemoryPre, MemoryPost, MemoryDiff, Time, Error);
         System.out.println("\nFile CSV creato");
 
 
