@@ -42,4 +42,4 @@ Per ognuna di esse si osserva:
 - l’errore relativo tra la soluzione calcolata x e la soluzione esatta xe
 - la memoria necessaria per risolvere il sistema
 
-Per ciascuna matrice analizzata, queste quantità vengono salvate all'interno del file [dati_java.csv](https://github.com/EmanueleDubini/ProgettoCalcoloScientifico_EJML/blob/master/src/main/java/org/BDD/dati_java.csv) usato poi da un programma Python per generarne i grafici: https://github.com/dbancora/ProgettoCalcoloScientifico_Grafici.git
+Per ciascuna matrice analizzata, queste quantità vengono salvate all'interno del file [dati_java.csv](https://github.com/EmanueleDubini/ProgettoCalcoloScientifico_EJML/blob/master/src/main/java/org/BDD/dati_java.csv) usando un programma Python per generarne i rispettivi grafici: https://github.com/dbancora/ProgettoCalcoloScientifico_Grafici.git
