@@ -34,3 +34,12 @@ Le Matrici simmetriche e definite positive considerate fanno parte della SuiteSp
 | [cfd2.mat](https://sparse.tamu.edu/Rothberg/cfd2)   | :white_check_mark:    | 23192 |
 | [StocF-1465.mat](https://sparse.tamu.edu/Janna/StocF-1465)   | Out of memory :x:    | 178368 |
 | [Flan_1565.mat](https://sparse.tamu.edu/Janna/Flan_1565)   | Out of Memory :x:    | 292858 |
+
+## File dati_java.csv
+Durante l'esecuzione del file *Main.java* vengono analizzate una ad una le matrici in formato .mat contenute all'interno della cartella [Matrici](https://github.com/EmanueleDubini/ProgettoCalcoloScientifico_EJML/tree/master/src/main/java/org/BDD/Matrici). 
+Per ognuna di esse si osserva:
+- il tempo necessario per calcolare la soluzione x
+- l’errore relativo tra la soluzione calcolata x e la soluzione esatta xe
+- la memoria necessaria per risolvere il sistema
+
+Per ciascuna matrice analizzata, queste quantità vengono salvate all'interno del file (dati_java.csv)[https://github.com/EmanueleDubini/ProgettoCalcoloScientifico_EJML/blob/master/src/main/java/org/BDD/dati_java.csv] usato poi da un programma Python per generarne i grafici: https://github.com/dbancora/ProgettoCalcoloScientifico_Grafici.git
