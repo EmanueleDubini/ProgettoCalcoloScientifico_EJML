@@ -72,15 +72,15 @@ public class Main {
                 if (MatrixFeatures_DSCC.isPositiveDefinite(A)) {
                     System.out.println("La matrice A è definita positiva");
                 } else {
-                    System.out.println("La matrice A non è definita positiva");
-                    //se si arriva qui va lanciata un eccezione throw new RuntimeException("La matrice A non è definita positiva");
+                    System.err.println("La matrice A non è definita positiva");
+                    System.exit(1);
                 }
 
                 if (MatrixFeatures_DSCC.isSymmetric(A, 1e-8)) {
                     System.out.println("La matrice A è simmetrica");
                 } else {
-                    System.out.println("La matrice A non è simmetrica");
-                    //se si arriva qui va lanciata un eccezione throw new RuntimeException("La matrice A non è simmetrica");
+                    System.err.println("La matrice A non è simmetrica");
+                    System.exit(1);
                 }
 
                 //----------CALCOLO SOLUZIONE CON DECOMPOSIZIONE DI CHOLESKY----------
@@ -113,7 +113,7 @@ public class Main {
                 solver.setA(A);
                 solver.solveSparse(B, x);
 
-                System.out.println("Sistema risolto");
+                System.out.println("\nSistema risolto\n");
 
                 // Misura la memoria finale
                 long memoriaFinale = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
