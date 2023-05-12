@@ -15,21 +15,8 @@
     </properties>
 
     <dependencies>
-        <!-- dipendenza suggerita da ChatGPT-->
-        <!--<dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-math3</artifactId>
-            <version>3.6.1</version>
-        </dependency>-->
 
-        <!--<dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-math-parent</artifactId>
-            <version>4.0-beta1</version>
-            <type>pom</type>
-        </dependency>-->
-
-        <!-- Efficient Java Matrix Library (EJML) dependecy. It's a linear algebra library for manipulating real/complex/dense/sparse matrices-->
+        <!-- Efficient Java Matrix Library (EJML) dependency. It's a linear algebra library for manipulating real/complex/dense/sparse matrices-->
         <dependency>
             <groupId>org.ejml</groupId>
             <artifactId>ejml-all</artifactId>
