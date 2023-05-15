@@ -69,6 +69,7 @@ public class Main {
 
 
                 //----------CONTROLLO CHE LA MATRICE SIA DEFINITA POSITIVA E SIMMETRICA----------
+                long start1 = System.currentTimeMillis();
                 if (MatrixFeatures_DSCC.isPositiveDefinite(A)) {
                     System.out.println("La matrice A è definita positiva");
                 } else {
@@ -82,6 +83,9 @@ public class Main {
                     System.err.println("La matrice A non è simmetrica");
                     System.exit(1);
                 }
+                long stop1 = System.currentTimeMillis();
+                double Positive_SymmmetricSeconds = (stop1 - start1) / 1000.0;
+                System.out.println("Tempo di controllo che la matrice sia definita positiva e simmetrica: " + Positive_SymmmetricSeconds + " secondi\n");
 
                 //----------CALCOLO SOLUZIONE CON DECOMPOSIZIONE DI CHOLESKY----------
                 // Libera la memoria non utilizzata
