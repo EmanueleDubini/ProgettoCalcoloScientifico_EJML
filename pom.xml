@@ -22,13 +22,15 @@
             <artifactId>ejml-all</artifactId>
             <version>0.43</version>
         </dependency>
-    <!-- The MAT File Library (MFL) is a Java library for reading and writing MAT Files that are compatible with MATLAB’s MAT-File Format.-->
+
+        <!-- The MAT File Library (MFL) is a Java library for reading and writing MAT Files that are compatible with MATLAB’s MAT-File Format.-->
         <dependency>
             <groupId>us.hebi.matlab.mat</groupId>
             <artifactId>mfl-core</artifactId>
             <version>0.5.14</version>
         </dependency>
 
+        <!-- In case you are working with EJML matrix types, you may also want to include the mfl-ejml extension. -->
         <dependency>
             <groupId>us.hebi.matlab.mat</groupId>
             <artifactId>mfl-ejml</artifactId>
