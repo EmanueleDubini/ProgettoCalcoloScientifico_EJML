@@ -62,7 +62,7 @@ public class Main {
                 File matriceA = new File("src/main/java/org/BDD/Matrici/" + file.getName());
                 long dimensionA = matriceA.length();
                 Size.add(dimensionA);
-                System.out.println("Dimensioni matrice A: " + dimensionA / (1024 * 1024) + " MB.");
+                System.out.println("Dimensioni matrice A: " + dimensionA / (1024 * 1024) + " MB");
 
                 System.out.println("\n---> Inizio elaborazione matrice " + file.getName() + " \n");
                 MatrixName.add(file.getName());
@@ -84,8 +84,8 @@ public class Main {
                     System.exit(1);
                 }
                 long stop1 = System.currentTimeMillis();
-                double Positive_SymmmetricSeconds = (stop1 - start1) / 1000.0;
-                System.out.println("Tempo di controllo che la matrice sia definita positiva e simmetrica: " + Positive_SymmmetricSeconds + " secondi\n");
+                double Positive_SymmetricSeconds = (stop1 - start1) / 1000.0;
+                System.out.println("Tempo di controllo che la matrice sia definita positiva e simmetrica: " + Positive_SymmetricSeconds + " secondi\n");
 
                 //----------CALCOLO SOLUZIONE CON DECOMPOSIZIONE DI CHOLESKY----------
                 // Libera la memoria non utilizzata
@@ -94,24 +94,24 @@ public class Main {
                 long memoriaIniziale = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
                 MemoryPre.add(memoriaIniziale);
 
-                //calcola la dimensione della matrice A
+                // Calcola la dimensione della matrice A
                 int n = A.numCols; //la matrice è simmetrica quindi n = m
 
-                //Crea il vettore B di modo che x = [1,1,....,1]
-                //tmp è un vettore colonna, va creato il vettore di tutti 1 e poi moltiplicato per la matrice A per creare B
+                // Crea il vettore B di modo che x = [1,1,....,1]
+                // tmp è un vettore colonna, va creato il vettore di tutti 1 e poi moltiplicato per la matrice A per creare B
                 DMatrixSparseCSC tmp = new DMatrixSparseCSC(n, 1);
                 for (int j = 0; j < n; j++) {
                     tmp.set(j, 0, 1);
                 }
 
-                //moltiplicazione tra il vettore di tutti 1 tmp e la matrice A, il risultato viene salvato in B
-                DMatrixSparseCSC B = CommonOps_MT_DSCC.mult(A, tmp, null); //B = A*tmp eseguito in mmulti-thread
+                // Moltiplicazione tra il vettore di tutti 1 tmp e la matrice A, il risultato viene salvato in B
+                DMatrixSparseCSC B = CommonOps_MT_DSCC.mult(A, tmp, null); //B = A*tmp eseguito in multi-thread
 
-                //Crea il vettore x
-                DMatrixSparseCSC x = new DMatrixSparseCSC(n, 1);   //x è un vettore colonna con tutti gli elementi uguali a 0
+                // Crea il vettore x
+                DMatrixSparseCSC x = new DMatrixSparseCSC(n, 1);   //x è un vettore colonna con tutti gli elementi uguali a zero
 
-
-                long startTime = System.currentTimeMillis(); //registra il tempo d'inizio
+                // Registra il tempo d'inizio
+                long startTime = System.currentTimeMillis();
 
                 LinearSolverSparse<DMatrixSparseCSC, DMatrixRMaj> solver = LinearSolverFactory_DSCC.cholesky(FillReducing.NONE);
                 solver.setA(A);
@@ -130,27 +130,27 @@ public class Main {
                 System.out.println("Memoria finale: " + (memoriaFinale / (1024F * 1024F)) + " MB");
                 System.out.println("Memoria utilizzata nella risoluzione: " + (memoriaUtilizzata / (1024F * 1024F)) + " MB");
 
-                //registra il tempo di fine
+                // Registra il tempo di fine
                 long stopTime = System.currentTimeMillis();
-                //calcola il tempo impiegato in millisecondi
+                // Calcola il tempo impiegato in millisecondi
                 double elapsedTimeSeconds = (stopTime - startTime) / 1000.0;
                 Time.add(elapsedTimeSeconds);
                 System.out.println("Tempo di esecuzione: " + elapsedTimeSeconds + " s");
 
                 //----------CALCOLO ERRORE RELATIVO----------
-                //definisco vettore soluzione xe esatta di modo che xe = [1,1,....,1]
+                // Definisco vettore soluzione xe esatta di modo che xe = [1,1,....,1]
                 DMatrixSparseCSC xe = new DMatrixSparseCSC(n, 1);
                 for (int z = 0; z < n; z++) {
                     xe.set(z, 0, 1);
                 }
 
-                //calcolo norma || x -xe||
+                // Calcolo norma || x -xe||
                 DMatrixSparseCSC x_diff_xe = new DMatrixSparseCSC(n, 1);
                 x_diff_xe = CommonOps_DSCC.add(1, x, -1, xe, x_diff_xe, null, null);
                 double norm_diff = NormOps_DSCC.normF(x_diff_xe);
-                //calcolo norma || xe||
+                // Calcolo norma || xe||
                 double norm_xe = NormOps_DSCC.normF(xe);
-                //calcolo errore relativo
+                //Calcolo errore relativo
                 double relative_error = norm_diff / norm_xe;
 
                 Error.add(relative_error);
@@ -162,7 +162,27 @@ public class Main {
         System.out.println("\n----------------------------------------------------------------------");
 
         //----------SCRITTURA FILE CSV----------
-        write("src/main/java/org/BDD/dati_java.csv", MatrixName, Size, MemoryPre, MemoryPost, MemoryDiff, Time, Error);
+        // Separatore di percorso del sistema operativo corrente
+        String fileSeparator = System.getProperty("file.separator");
+
+        // Nome del sistema operativo corrente
+        String osName = System.getProperty("os.name").toLowerCase();
+
+        // Creazione del nome del file basato sul sistema operativo corrente
+        String fileName = "dati_java";
+        if (osName.contains("win")) {
+            fileName += "_windows.csv";
+        } else if (osName.contains("nix") || osName.contains("nux")) {
+            fileName += "_linux.csv";
+        } else if (osName.contains("mac")){
+            fileName += "_mac.csv";
+        } else {
+            // Sistema operativo diverso da Windows, Linux o Mac --> utilizzo del nome di default dati_java.csv
+            fileName += ".csv";
+        }
+
+        // Chiamata al metodo write utilizzando il nome del file appropriato
+        write("src" + fileSeparator + "main" + fileSeparator + "java" + fileSeparator + "org" + fileSeparator + "BDD" + fileSeparator + fileName, MatrixName, Size, MemoryPre, MemoryPost, MemoryDiff, Time, Error);
         System.out.println("\nFile CSV creato");
        }
 
