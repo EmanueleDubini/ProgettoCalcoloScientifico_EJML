@@ -181,6 +181,7 @@ public class Main {
             fileName += ".csv";
         }
 
+        //todo aggiornare percorso in modo tale che venga stampato assieme alla relazione
         // Chiamata al metodo write utilizzando il nome del file appropriato
         write("src" + fileSeparator + "main" + fileSeparator + "java" + fileSeparator + "org" + fileSeparator + "BDD" + fileSeparator + fileName, MatrixName, Size, MemoryPre, MemoryPost, MemoryDiff, Time, Error);
         System.out.println("\nFile CSV creato");
