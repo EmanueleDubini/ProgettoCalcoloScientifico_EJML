@@ -20,13 +20,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * The Main class is a Java program that reads in sparse, symmetric, positive definite matrices from files, solves a
- * system of linear equations using Cholesky decomposition, and records data about the matrices and the solution process
+ * @version 1.0
+ * La classe Main.java contiene un programma che legge matrici sparse, simmetriche e definite positive dai rispettivi file,
+ * risolve un sistema di equazioni lineari utilizzando la decomposizione di Cholesky
+ * e registra i dati relativi alle matrici e al processo di soluzione
  */
 public class Main {
     public static void main(String[] args) throws IOException {
 
-        // Initialize arrays to store data for each matrix
+        // Inizializzazione degli array per memorizzare i dati di ogni matrice
         ArrayList<String> MatrixName = new ArrayList<>();
         ArrayList<Long> Size = new ArrayList<>();
         ArrayList<Long> MemoryPre = new ArrayList<>();
@@ -95,9 +97,10 @@ public class Main {
                 MemoryPre.add(memoriaIniziale);
 
                 // Calcola la dimensione della matrice A
-                int n = A.numCols; //la matrice è simmetrica quindi n = m
+                //la matrice è simmetrica quindi n = m
+                int n = A.numCols;
 
-                // Crea il vettore B di modo che x = [1,1,....,1]
+                // Crea il vettore B di modo che x = [1,1,...,1]
                 // tmp è un vettore colonna, va creato il vettore di tutti 1 e poi moltiplicato per la matrice A per creare B
                 DMatrixSparseCSC tmp = new DMatrixSparseCSC(n, 1);
                 for (int j = 0; j < n; j++) {
@@ -105,10 +108,12 @@ public class Main {
                 }
 
                 // Moltiplicazione tra il vettore di tutti 1 tmp e la matrice A, il risultato viene salvato in B
-                DMatrixSparseCSC B = CommonOps_MT_DSCC.mult(A, tmp, null); //B = A*tmp eseguito in multi-thread
+                //B = A*tmp eseguito in multi-thread
+                DMatrixSparseCSC B = CommonOps_MT_DSCC.mult(A, tmp, null);
 
                 // Crea il vettore x
-                DMatrixSparseCSC x = new DMatrixSparseCSC(n, 1);   //x è un vettore colonna con tutti gli elementi uguali a zero
+                //x è un vettore colonna con tutti gli elementi uguali a zero
+                DMatrixSparseCSC x = new DMatrixSparseCSC(n, 1);
 
                 // Registra il tempo d'inizio
                 long startTime = System.currentTimeMillis();
@@ -162,13 +167,23 @@ public class Main {
         System.out.println("\n----------------------------------------------------------------------");
 
         //----------SCRITTURA FILE CSV----------
-        // Separatore di percorso del sistema operativo corrente
-        String fileSeparator = System.getProperty("file.separator");
-
         // Nome del sistema operativo corrente
         String osName = System.getProperty("os.name").toLowerCase();
 
-        // Creazione del nome del file basato sul sistema operativo corrente
+        // Creazione del percorso dove salvare il file CSV e del nome del file basato sul sistema operativo corrente
+        String pathCSV = getPathCSV(osName);
+
+        // Scrittura del file CSV
+        write(pathCSV, MatrixName, Size, MemoryPre, MemoryPost, MemoryDiff, Time, Error);
+        System.out.println("\nFile CSV creato");
+       }
+
+    /**
+     * @param osName nome del sistema operativo corrente
+     * @return percorso dove salvare il file CSV
+     */
+    private static String getPathCSV(String osName) {
+        //creazione nome del file CSV basato sul sistema operativo corrente
         String fileName = "dati_java";
         if (osName.contains("win")) {
             fileName += "_windows.csv";
@@ -181,28 +196,24 @@ public class Main {
             fileName += ".csv";
         }
 
-        //todo aggiornare percorso in modo tale che venga stampato assieme alla relazione
-        // Chiamata al metodo write utilizzando il nome del file appropriato
-        write("src" + fileSeparator + "main" + fileSeparator + "java" + fileSeparator + "org" + fileSeparator + "BDD" + fileSeparator + fileName, MatrixName, Size, MemoryPre, MemoryPost, MemoryDiff, Time, Error);
-        System.out.println("\nFile CSV creato");
-       }
+        //creazione percorso dove salvare il file CSV
+        return fileName;
+    }
 
     /**
-     * @param filePath CSV file path
-     * @param MatrixName ArrayList containing the names of the matrices
-     * @param Size ArrayList containing the sizes of the matrices
-     * @param MemoryPre ArrayList containing the memory before solving the system with Cholesky decomposition
-     * @param MemoryPost ArrayList containing the memory after solving the system with Cholesky decomposition
-     * @param MemoryDiff ArrayList containing the memory difference before and after solving the system with Cholesky decomposition (MemoryPost - MemoryPre)
-     * @param Time ArrayList containing the time taken to solve the system with Cholesky decomposition
-     * @param Error ArrayList containing the relative error of the solution
-     * @throws IOException if an I/O error occurs
+     * @param filePath percorso del file CSV
+     * @param MatrixName ArrayList contenente i nomi delle matrici
+     * @param Size ArrayList contenente le dimensioni delle matrici
+     * @param MemoryPre ArrayList contenente la memoria prima di risolvere il sistema con la decomposizione di Cholesky
+     * @param MemoryPost ArrayList contenente la memoria dopo aver risolto il sistema con la decomposizione di Cholesky
+     * @param MemoryDiff ArrayList contenente la differenza di memoria prima e dopo aver risolto il sistema con la decomposizione di Cholesky (MemoryPost - MemoryPre)
+     * @param Time ArrayList contenente il tempo impiegato per risolvere il sistema con la decomposizione di Cholesky
+     * @param Error ArrayList contenente l'errore relativo della soluzione
+     * @throws IOException se si verifica un errore durante la scrittura del file CSV
      * <p>
-     * The write function is a Java method that takes in several arguments: a filePath string, and several ArrayLists of
-     * data: MatrixName, Size, MemoryPre, MemoryPost, MemoryDiff, Time, and Error. The function writes the data
-     * to a CSV file specified by the filePath argument.The write function is a Java method that takes in several arguments: a filePath string, and several ArrayLists of
-     * data: MatrixName, Size, MemoryPre, MemoryPost, MemoryDiff, Time, and Error. The function writes the data
-     * to a CSV file specified by the filePath argument.
+     * La funzione write è un metodo Java che prende in ingresso diversi argomenti: una stringa filePath, e diversi ArrayList di
+     * dati: MatrixName, Size, MemoryPre, MemoryPost, MemoryDiff, Time, and Error.
+     * La funzione "write" scrive i dati in un file CSV con percorso in cui viene salvato specificato dall'argomento filePath.
      */
     public static void write(String filePath, ArrayList<String> MatrixName, ArrayList<Long> Size, ArrayList<Long> MemoryPre,
                              ArrayList<Long> MemoryPost, ArrayList<Long> MemoryDiff, ArrayList<Double> Time,
